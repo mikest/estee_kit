@@ -129,10 +129,16 @@ func get_aabb() -> AABB:
 	return bounds
 
 #region Equip/Unequip mechanics
-func _get_level() -> Level:
+#func _get_level() -> Level:
+	#if is_inside_tree():
+		#var main: Main = get_tree().current_scene
+		#return main.level as Level
+	#else:
+		#return null
+
+func _get_level() -> Node3D:
 	if is_inside_tree():
-		var main: Main = get_tree().current_scene
-		return main.level as Level
+		return get_tree().current_scene
 	else:
 		return null
 

@@ -54,7 +54,7 @@ func fire():
 	if projectile_scene:
 		var projectile: Projectile = projectile_scene.instantiate()
 		if projectile:
-			var main: Main = get_tree().current_scene
+			var main: Node3D = get_tree().current_scene
 			main.level.add_child(projectile)
 			
 			if launch_point:
