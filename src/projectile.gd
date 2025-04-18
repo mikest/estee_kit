@@ -2,25 +2,38 @@
 extends Weapon
 class_name Projectile
 
+## Projectile is a subclass of [Weapon] that is used to represent things that are fired.
+##
+## It has two additional effects that will be started the projectile first hits an object and
+## then when it expires. The [member attack_effect] will also start when launched. In this
+## way you can have smoke trails, an impact explosion, and then some sort of poof at the end.
+## [br][br]
+##
+## Note that projectiles can [i]also[/i] fire projectiles...
+## [br][br]
+##
+## [img]res://addons/estee_kit/docs/example_projectile.png[/img]
+
 enum Hit {
-	Stick,
-	Bounce,
-	Expire
+	Stick,		## This projectile should stick into objects
+	Bounce,		## This projectile should not stick into objects.
 }
 
-@export var speed: float = 50.0
-@export var expiration_time: float = 10.0	# Max time, min time is half this. Zero is "never expires"
-@export var hit_cooldown: float = 1.0 # Delay befor projectile attack disables after hitting
-@export var hit_type: Hit = Hit.Stick
+@export var speed: float = 50.0		## Projectile speed when fired.
+@export var expiration_time: float = 10.0	## Max time, min time is half this. Zero is "never expires"
+@export var hit_cooldown: float = 1.0	## Delay befor projectile attack disables after hitting
+@export var hit_type: Hit = Hit.Stick	## Behavior on hit.
+@export var fire_on_hit: bool = true	## Fires sub-projectile on hit.
 
-@export var hit_effect: Effect
-@export var expire_effect: Effect
+@export var hit_effect: Effect	## Effect starts on impact.
+@export var expire_effect: Effect	## Effect starts on expiration. Delays expiration until it completes.
 
 var _expired:bool = false
 var _expired_timer: Timer = null
-
 var _remote_transform: = RemoteTransform3D.new()	# not attached until we hit something.
 
+
+## Call [code]super._ready()[/code] if you sublass.
 func _ready() -> void:
 	super._ready()
 	_expired_timer = Timer.new()
@@ -38,6 +51,8 @@ func _ready() -> void:
 	if type != Item.Type.PROJECTILE:
 		push_warning("Item ", name, " type is not PROJECTILE!")
 
+
+## NOTE: Signal registered by [Weapon] in [method _ready].
 func _on_body_entered(body: Node):
 	super._on_body_entered(body)
 	
@@ -52,6 +67,8 @@ func _on_body_entered(body: Node):
 		# attach to collider, delete projectile if collider exits
 		body.add_child(_remote_transform)
 		
+		# why the transform instead of just reparenting?
+		# this avoids some scene nonsense that messes with the physics.
 		_remote_transform.global_transform = global_transform
 		_remote_transform.remote_path = _remote_transform.get_path_to(self)
 		_remote_transform.tree_exited.connect(queue_free)
@@ -63,11 +80,17 @@ func _on_body_entered(body: Node):
 	if hit_effect:
 		hit_effect.start()
 	
+	# chain fire sub-projectiles...
+	if fire_on_hit:
+		fire()
+	
 	# stop after a cooldown delay
 	if hit_cooldown > 0:
 		await get_tree().create_timer(hit_cooldown).timeout
 	attack_stop()
 
+
+## Called on expiration.
 func on_expired():
 	if _expired:
 		if expire_effect:
@@ -87,7 +110,7 @@ func on_expired():
 		if expire_effect:
 			expire_effect.start()
 		
-		# apply a small amount of angular torque towards gravity
+		# apply a small amount of angular torque towards gravity when dropping
 		apply_torque(Vector3(-45,0,0))
 		
 		# start the timer again, but this time we free when we expire

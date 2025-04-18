@@ -54,8 +54,7 @@ func fire():
 	if projectile_scene and (projectile_count != 0):
 		var projectile: Projectile = projectile_scene.instantiate()
 		if projectile:
-			var main: Node3D = get_tree().current_scene
-			main.level.add_child(projectile)
+			_get_level().add_child(projectile)
 			
 			if launch_point:
 				projectile.global_transform = launch_point.global_transform
@@ -77,6 +76,7 @@ func fire():
 			
 			# enabled
 			projectile.attack_start()
+			
 			if projectile_count > 0:
 				projectile_count -= 1
 
