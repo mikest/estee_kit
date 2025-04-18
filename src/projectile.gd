@@ -48,6 +48,14 @@ func _ready() -> void:
 		push_warning("Item ", name, " type is not PROJECTILE!")
 
 
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
+	
+	# orient towards the direction of flight
+	if not freeze and not _expired:
+		look_at(position + (linear_velocity * -1))
+
+
 ## NOTE: Signal registered by [Item] in [method _ready].
 func _on_body_entered(body: Node):
 	super._on_body_entered(body)
