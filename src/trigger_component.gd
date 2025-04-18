@@ -14,6 +14,7 @@ extends Area3D
 
 ## Emitted when a character collides with us
 signal on_trigger(user: Node3D)
+signal on_triggered()	## same as above, but with no user
 
 ## The rate at which we can interact with the object
 @export var trigger_cooldown: float = .25  # delay between allowable on_interact invocations
@@ -61,4 +62,5 @@ func trigger(user: Node3D):
 	if can_interact and not user.is_ancestor_of(self):
 		await get_tree().create_timer(trigger_delay).timeout
 		on_trigger.emit(user)
+		on_triggered.emit()
 		_cooldown.start(trigger_cooldown)

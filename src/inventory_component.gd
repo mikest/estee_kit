@@ -12,13 +12,13 @@ class_name InventoryComponent
 ## item, and a mechanism for updating positions when added and removed.
 ##
 
-signal on_selection_change
-
+signal on_selection_change()
 signal on_add_item(item: Item)
 signal on_remove_item(item: Item)
 
 var _selected: int = 0
 var _open: bool = false
+
 
 var is_empty: bool:
 	get: return get_child_count() == 0
@@ -44,6 +44,7 @@ func _ready() -> void:
 #endregion
 
 
+#region Ownership Changes
 func _on_child_entered_tree(node: Node):
 	var item: Item = node as Item
 	if item:
@@ -65,6 +66,7 @@ func _on_child_exiting_tree(node: Node):
 	if item:
 		_deferred_child_exited(item)
 
+
 func _deferred_child_exited(item: Item):
 	_on_item_removed(item)
 	if item == selected_item():
@@ -74,18 +76,27 @@ func _deferred_child_exited(item: Item):
 	_update_item_positions()
 	on_remove_item.emit(item)
 	print_rich(self.name, " removed [color=orange]", item,"[/color]")
+#endregion
 
 
+#region Subclass Callbacks
+## To be overloaded by derived classes to do something when an Item is added.
 func _on_item_added(_item: Item):
 	pass
 
+## To be overloaded by derived classes to do something when an Item is removed.
 func _on_item_removed(_item: Item):
 	pass
 
-# To be overloaded by derived classes for custom positioning
+## To be overloaded by derived classes for custom positioning
 func _update_item_position(item: Item, _index: int, _count: int):
 	item.transform = Transform3D.IDENTITY
-	pass	# To be overridden by derived class
+
+
+## To be overloaded by derived classes for custom selection actions
+func _selection_change():
+	pass
+#endregion
 
 
 # Called when the slot count changes
@@ -105,9 +116,7 @@ func selected_item() -> Item:
 		return items[_selected] as Item
 	else:
 		return null
-
-func _selection_change():
-	pass
+	
 
 func select_item(item: Item):
 	if item and is_ancestor_of(item):
@@ -117,10 +126,12 @@ func select_item(item: Item):
 	else:
 		push_warning("Couldn't select item! ", item)
 
+
 func select_none():
 	_selected = -1
 	_selection_change()
 	on_selection_change.emit()
+
 
 func select_next():
 	var items := get_children()

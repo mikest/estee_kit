@@ -168,3 +168,4 @@ static func enable_collisions(node: Node3D, enabled: bool):
 	assert(collisions, "Missing collisions")
 	for collision: CollisionShape3D in collisions:
 		collision.disabled = not enabled
+		collision.debug_fill = enabled

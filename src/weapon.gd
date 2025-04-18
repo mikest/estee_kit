@@ -17,12 +17,11 @@ extends Item
 
 @onready var attack_component: AttackComponent = %AttackComponent
 
+var is_attacking: bool:
+	get: return attack_component.enabled
+
 var can_attack: bool:
 	get: return can_use
-
-var is_attacking: bool:
-	#get: return interactable.monitoring
-	get: return attack_component.enabled
 
 #region Runtime
 func _ready():
@@ -33,6 +32,9 @@ func _ready():
 	_add_glint_overlay()
 	if attack_effect:
 		attack_effect.stop()
+	
+	# initial state
+	attack_stop()
 
 func _add_glint_overlay():
 	var glint: ShaderMaterial = load("res://materials/glint.tres")

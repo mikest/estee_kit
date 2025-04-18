@@ -68,9 +68,6 @@ func _on_cooldown():
 	if not one_shot and _attack_bodies.size():
 		for health: HealthComponent in _attack_bodies.values():
 			attack(health)
-		
-		# restart cooldown timer
-		print("cooldown")
 
 
 ## Call to enable the area for attacking health
