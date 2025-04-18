@@ -24,6 +24,7 @@ enum Hit {
 @export var hit_effect: Effect	## Effect starts on impact.
 @export var expire_effect: Effect	## Effect starts on expiration. Delays expiration until it completes.
 
+var _fired:bool = false
 var _expired:bool = false
 var _expired_timer: Timer = null
 var _remote_transform: = RemoteTransform3D.new()	# not attached until we hit something.
@@ -51,9 +52,15 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	
-	# orient towards the direction of flight
-	if not freeze and not _expired:
+	# orient towards the direction of flight between fire and hit
+	if not freeze and _fired and not _expired:
 		look_at(position + (linear_velocity * -1))
+
+
+## Set the fired flag when attack starts for a projectile.
+func attack_start():
+	super.attack_start()
+	_fired = true
 
 
 ## NOTE: Signal registered by [Item] in [method _ready].
