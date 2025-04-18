@@ -1,0 +1,361 @@
+[gd_scene load_steps=43 format=3 uid="uid://c4dipunf5h2je"]
+
+[ext_resource type="PackedScene" uid="uid://cfcpr02wnoxyp" path="res://assets/flag_B_blue.fbx" id="1_2jas5"]
+[ext_resource type="Script" uid="uid://bdjxr47pmhu02" path="res://ball_character.gd" id="2_kkclv"]
+[ext_resource type="Script" uid="uid://dnd7jxg4dw0af" path="res://addons/estee_kit/src/item_slot.gd" id="4_kkclv"]
+[ext_resource type="Script" uid="uid://ce7ykjlwy53tn" path="res://addons/estee_kit/src/health_component.gd" id="4_mt10o"]
+[ext_resource type="PackedScene" uid="uid://dj2ecyxadn4af" path="res://assets/bomb_B_blue.fbx" id="4_ugfer"]
+[ext_resource type="PackedScene" uid="uid://dh334155mr372" path="res://assets/button_base_blue.fbx" id="5_rujmf"]
+[ext_resource type="Script" uid="uid://dy50svu3lgy84" path="res://addons/estee_kit/src/inventory_component.gd" id="5_v40a1"]
+[ext_resource type="Script" uid="uid://bn6o7ll6vv6iq" path="res://addons/estee_kit/src/weapon.gd" id="6_3dlnp"]
+[ext_resource type="Script" uid="uid://c35osqwwmoto6" path="res://addons/estee_kit/src/effect.gd" id="7_3dlnp"]
+[ext_resource type="Script" uid="uid://bfaxe678u3tin" path="res://addons/estee_kit/src/trigger_component.gd" id="8_hl4on"]
+[ext_resource type="Script" uid="uid://bftjv4xa3cv2a" path="res://addons/estee_kit/src/attack_component.gd" id="8_p21br"]
+[ext_resource type="Script" uid="uid://dn0kx2s2rht1" path="res://addons/estee_kit/src/attack.gd" id="9_7jkea"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_8lvy3"]
+height = 3.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kkclv"]
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mt10o"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.232059, 0.619698, 1)
+emission = Color(2, 0.68, 0.488, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_hl4on"]
+material = SubResource("StandardMaterial3D_mt10o")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wcwec"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n51mc"]
+albedo_color = Color(0.343462, 0.30936, 0.31822, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8lvy3"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mt10o"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3dlnp"]
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.502719, 0.502719, 0.502719, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hl4on"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_v40a1"]
+height = 0.4375
+radius = 1.0
+
+[sub_resource type="Animation" id="Animation_p21br"]
+resource_name = "start"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("%AttackComponent/CollisionShape3D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.0333333, 0.366667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.1, 0.1, 0.1), Vector3(1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Boom:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.0666667),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("%AttackComponent")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.966667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"attack_stop"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_7jkea"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("%AttackComponent/CollisionShape3D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Boom:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("%AttackComponent")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"attack_stop"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6yyhk"]
+_data = {
+&"RESET": SubResource("Animation_7jkea"),
+&"start": SubResource("Animation_p21br")
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p21br"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.805417, 0.435411, 3.85046e-07, 1)
+
+[sub_resource type="Curve" id="Curve_3dlnp"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_p21br"]
+curve = SubResource("Curve_3dlnp")
+
+[sub_resource type="Curve" id="Curve_7jkea"]
+_data = [Vector2(0, 0), 0.0, 3.29697, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_6yyhk"]
+curve = SubResource("Curve_7jkea")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7jkea"]
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 0.01
+initial_velocity_max = 0.01
+gravity = Vector3(0, 0.01, 0)
+scale_min = 4.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_6yyhk")
+alpha_curve = SubResource("CurveTexture_p21br")
+
+[sub_resource type="SphereMesh" id="SphereMesh_02uy8"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_6yyhk"]
+radius = 0.430558
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_02uy8"]
+height = 0.375
+radius = 0.25
+
+[sub_resource type="Resource" id="Resource_til5q"]
+script = ExtResource("9_7jkea")
+cooldown = 0.2
+attack_damage = 25.0
+knockback_force = 100.0
+attack_position = Vector3(0, 0, 0)
+attack_direction = Vector3(0, 0, 0)
+metadata/_custom_type_script = ExtResource("9_7jkea")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_5xqlg"]
+radius = 2.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3dlnp"]
+size = Vector3(1, 0.375, 1)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kkclv"]
+energy_multiplier = 5.0
+
+[sub_resource type="Sky" id="Sky_mt10o"]
+sky_material = SubResource("ProceduralSkyMaterial_kkclv")
+
+[sub_resource type="Environment" id="Environment_hl4on"]
+background_mode = 2
+sky = SubResource("Sky_mt10o")
+ambient_light_source = 3
+ambient_light_color = Color(0.958739, 0.961805, 0.970185, 1)
+reflected_light_source = 2
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_v40a1"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.866025, -0.16904, 0.470559, 0, 0.941117, 0.338081, -0.5, -0.292787, 0.815031, 4, 3.12415, 5.22492)
+
+[node name="Flag" type="StaticBody3D" parent="."]
+collision_mask = 7
+
+[node name="flag_B_blue" parent="Flag" instance=ExtResource("1_2jas5")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Flag"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("CylinderShape3D_8lvy3")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Flag"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+emitting = false
+amount = 50
+one_shot = true
+explosiveness = 0.5
+process_material = SubResource("ParticleProcessMaterial_kkclv")
+draw_pass_1 = SubResource("SphereMesh_hl4on")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_wcwec")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_n51mc")
+mesh = SubResource("BoxMesh_8lvy3")
+
+[node name="Character" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 2)
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("2_kkclv")
+
+[node name="HealthComponent" type="CollisionShape3D" parent="Character"]
+shape = SubResource("CapsuleShape3D_mt10o")
+script = ExtResource("4_mt10o")
+metadata/_custom_type_script = ExtResource("4_mt10o")
+
+[node name="ItemSlot" type="RemoteTransform3D" parent="Character"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("4_kkclv")
+metadata/_custom_type_script = ExtResource("4_kkclv")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Character"]
+material_override = SubResource("StandardMaterial3D_3dlnp")
+mesh = SubResource("CapsuleMesh_hl4on")
+
+[node name="InventoryComponent" type="Node3D" parent="Character"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, -2)
+script = ExtResource("5_v40a1")
+metadata/_custom_type_script = ExtResource("5_v40a1")
+
+[node name="InteractionArea" type="Area3D" parent="Character"]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Character/InteractionArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.34375, 0)
+shape = SubResource("CylinderShape3D_v40a1")
+debug_color = Color(0.639897, 0.342282, 0.992185, 0.42)
+
+[node name="HitPoints" type="Label3D" parent="Character"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.75, 0)
+pixel_size = 0.01
+billboard = 2
+
+[node name="Weapon" type="RigidBody3D" parent="." node_paths=PackedStringArray("attack_effect")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.875, 1, 0)
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("6_3dlnp")
+attack_effect = NodePath("Effect")
+metadata/_custom_type_script = ExtResource("6_3dlnp")
+
+[node name="Effect" type="Node3D" parent="Weapon"]
+editor_description = "Animates the attack area and creates an explosion effect."
+script = ExtResource("7_3dlnp")
+metadata/_custom_type_script = ExtResource("7_3dlnp")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon/Effect"]
+unique_name_in_owner = true
+editor_description = "Note the callback track to attack_stop() at the end of the animation, as well as the attack_stop() on RESET"
+libraries = {
+&"": SubResource("AnimationLibrary_6yyhk")
+}
+
+[node name="Boom" type="GPUParticles3D" parent="Weapon/Effect"]
+material_override = SubResource("StandardMaterial3D_p21br")
+emitting = false
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_7jkea")
+draw_pass_1 = SubResource("SphereMesh_02uy8")
+
+[node name="bomb_B_blue" parent="Weapon" instance=ExtResource("4_ugfer")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Weapon"]
+shape = SubResource("SphereShape3D_6yyhk")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Weapon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4375, 0)
+shape = SubResource("CylinderShape3D_02uy8")
+
+[node name="AttackComponent" type="Area3D" parent="Weapon"]
+unique_name_in_owner = true
+editor_description = "Note the % on the name. This is required."
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("8_p21br")
+damage = SubResource("Resource_til5q")
+metadata/_custom_type_script = ExtResource("8_p21br")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Weapon/AttackComponent"]
+shape = SubResource("SphereShape3D_5xqlg")
+debug_color = Color(0.975192, 0, 0.42123, 0.42)
+
+[node name="Button" parent="." instance=ExtResource("5_rujmf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -5)
+
+[node name="TriggerComponent" type="Area3D" parent="Button"]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("8_hl4on")
+trigger_delay = 1.0
+metadata/_custom_type_script = ExtResource("8_hl4on")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Button/TriggerComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1875, 0)
+shape = SubResource("BoxShape3D_3dlnp")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hl4on")
+camera_attributes = SubResource("CameraAttributesPractical_v40a1")
+
+[connection signal="on_attacked" from="Character/HealthComponent" to="Character" method="_on_health_component_on_attacked"]
+[connection signal="on_died" from="Character/HealthComponent" to="Character" method="_on_health_component_on_died"]
+[connection signal="on_health_changed" from="Character/HealthComponent" to="Character" method="_on_health_component_on_health_changed"]
+[connection signal="area_entered" from="Character/InteractionArea" to="Character" method="_on_interaction_area_area_entered"]
+[connection signal="body_entered" from="Character/InteractionArea" to="Character" method="_on_interaction_area_body_entered"]
+[connection signal="on_triggered" from="Button/TriggerComponent" to="Flag/GPUParticles3D" method="restart" binds= [false]]
