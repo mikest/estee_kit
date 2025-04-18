@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://be8wggirdu5qq"]
+
+[ext_resource type="Shader" uid="uid://bvyy2ecsktd1s" path="res://addons/estee_kit/materials/glint.gdshader" id="1_oveak"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_oveak")
+shader_parameter/shine_color = Color(1, 1, 1, 0.5)
+shader_parameter/cycle_interval = 0.2
+shader_parameter/shine_speed = 10.0
+shader_parameter/shine_width = 10.0

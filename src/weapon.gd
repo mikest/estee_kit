@@ -27,28 +27,12 @@ var can_attack: bool:
 func _ready():
 	super._ready()	# Item
 	assert(attack_component, "Missing %AttackComponent!")
-	
-	# Apply the glint shader to all meshes
-	_add_glint_overlay()
+		
 	if attack_effect:
 		attack_effect.stop()
 	
 	# initial state
 	attack_stop()
-
-func _add_glint_overlay():
-	var glint: ShaderMaterial = load("res://materials/glint.tres")
-	var meshes := find_children("*", "MeshInstance3D")
-	for node in meshes:
-		var mesh: MeshInstance3D = node
-		mesh.material_overlay = glint
-		
-		# set the depth pass for each sub-material so overlay renders correctly when picked up
-		# by character
-		if mesh.get_surface_override_material_count() > 0:
-			var mat: StandardMaterial3D = mesh.get_active_material(0) as StandardMaterial3D
-			if mat:
-				mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS
 #endregion
 
 # for projectile weapons

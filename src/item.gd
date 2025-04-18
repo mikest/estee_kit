@@ -51,6 +51,9 @@ signal on_dropped(item: Item)	## Dropped, and implicitly unequipped
 		for collision: CollisionShape3D in collisions:
 			collision.disabled = val
 
+
+@export var optional_glint_overlay: ShaderMaterial = preload("../materials/glint.tres")
+
 var can_use: bool:
 	get: return _cooldown.is_stopped()
 
@@ -80,6 +83,10 @@ func _ready() -> void:
 	_cooldown = Timer.new()
 	_cooldown.one_shot = true
 	add_child(_cooldown)
+	
+	# Apply the optional glint shader to all meshes
+	if optional_glint_overlay:
+		_add_glint_overlay()
 	
 	body_entered.connect(_on_body_entered)
 
@@ -118,6 +125,22 @@ func _physics_process(_delta: float) -> void:
 			queue_free()
 			push_warning("Dropped out of world, despawning ", self)
 #endregion
+
+
+## Optional styling to make interactable items easier to spot in scene.
+func _add_glint_overlay():
+	var meshes := find_children("*", "MeshInstance3D")
+	for node in meshes:
+		var mesh: MeshInstance3D = node
+		mesh.material_overlay = optional_glint_overlay
+		
+		# set the depth pass for each sub-material so overlay renders correctly when picked up
+		# by character
+		if mesh.get_surface_override_material_count() > 0:
+			var mat: StandardMaterial3D = mesh.get_active_material(0) as StandardMaterial3D
+			if mat:
+				mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS
+
 
 ## Get the extents of this object
 func get_aabb() -> AABB:
