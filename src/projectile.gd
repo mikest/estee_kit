@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	
 	# orient towards the direction of flight between fire and hit
-	if not freeze and _fired and not _expired:
+	if not freeze and _fired and not _expired and not linear_velocity.is_zero_approx():
 		look_at(position + (linear_velocity * -1))
 
 
