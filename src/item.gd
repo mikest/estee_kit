@@ -197,8 +197,8 @@ func get_handle_transform() -> Transform3D:
 		return Transform3D.IDENTITY
 
 func _on_body_entered(_body: Node):
+	# currently a no-op for all but Projectile
 	pass
-
 #endregion
 
 

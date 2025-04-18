@@ -9,9 +9,6 @@ class_name Projectile
 ## way you can have smoke trails, an impact explosion, and then some sort of poof at the end.
 ## [br][br]
 ##
-## Note that projectiles can [i]also[/i] fire projectiles...
-## [br][br]
-##
 ## [img]res://addons/estee_kit/docs/example_projectile.png[/img]
 
 enum Hit {
@@ -23,7 +20,6 @@ enum Hit {
 @export var expiration_time: float = 10.0	## Max time, min time is half this. Zero is "never expires"
 @export var hit_cooldown: float = 1.0	## Delay befor projectile attack disables after hitting
 @export var hit_type: Hit = Hit.Stick	## Behavior on hit.
-@export var fire_on_hit: bool = true	## Fires sub-projectile on hit.
 
 @export var hit_effect: Effect	## Effect starts on impact.
 @export var expire_effect: Effect	## Effect starts on expiration. Delays expiration until it completes.
@@ -39,7 +35,7 @@ func _ready() -> void:
 	_expired_timer = Timer.new()
 	add_child(_expired_timer)
 	_expired_timer.one_shot = true
-	_expired_timer.connect("timeout", on_expired)
+	_expired_timer.connect("timeout", _on_expired)
 	
 	# for collisions
 	contact_monitor = true
@@ -52,7 +48,7 @@ func _ready() -> void:
 		push_warning("Item ", name, " type is not PROJECTILE!")
 
 
-## NOTE: Signal registered by [Weapon] in [method _ready].
+## NOTE: Signal registered by [Item] in [method _ready].
 func _on_body_entered(body: Node):
 	super._on_body_entered(body)
 	
@@ -80,10 +76,6 @@ func _on_body_entered(body: Node):
 	if hit_effect:
 		hit_effect.start()
 	
-	# chain fire sub-projectiles...
-	if fire_on_hit:
-		fire()
-	
 	# stop after a cooldown delay
 	if hit_cooldown > 0:
 		await get_tree().create_timer(hit_cooldown).timeout
@@ -91,11 +83,14 @@ func _on_body_entered(body: Node):
 
 
 ## Called on expiration.
-func on_expired():
+func _on_expired():
+	# expire end
 	if _expired:
 		if expire_effect:
-			expire_effect.stop()
+			await expire_effect.await_stop()
 		queue_free()
+	
+	# expire start
 	else:
 		# NOTE: clear the remote_transform so it doesn't
 		# override our _handle_expiring animation!
@@ -106,13 +101,13 @@ func on_expired():
 		
 		# stop the hit effect when starting expire
 		if hit_effect:
-			hit_effect.stop()
+			await hit_effect.await_stop()
 		if expire_effect:
 			expire_effect.start()
 		
 		# apply a small amount of angular torque towards gravity when dropping
 		apply_torque(Vector3(-45,0,0))
 		
-		# start the timer again, but this time we free when we expire
+		# start the timer again. next time we free when we expire
 		if expiration_time > 0:
 			_expired_timer.start(randf_range(expiration_time/2,expiration_time))

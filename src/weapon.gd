@@ -22,14 +22,14 @@ extends Item
 ## Effect to play at [method attack_start] or [method fire].
 ## NOTE: For [method fire] attacks, the effect must be a one_shot to stop on its own.
 @export var attack_effect: Effect
+@export var attack_component: AttackComponent  ## Optional attack. Needed for melee weapons.
 
 @export_subgroup("Projectile Weapons")
 @export var launch_point: Marker3D = null	## Launch point. Fires towards MODEL_FRONT
 @export var projectile_scene: PackedScene = null	## Projectile to fire.
 @export var projectile_count: int = -1		## Number of shots left. Set to -1 for infinite ammo.
-@export_range(0,45,0.01,"radians_as_degrees") var projectile_jitter: float = 0.0 ## Random angular innaccuracy magnitude.
-
-@onready var attack_component: AttackComponent = %AttackComponent  ## Optional attack. Needed for melee weapons.
+@export_range(0,45,0.01,"radians_as_degrees") var spread_jitter: float = 0.0 ## Spread angle jitter amount.
+@export_range(0,45,0.01,"radians_as_degrees") var height_jitter: float = 0.0 ## Arc height jitter amount
 
 var is_attacking: bool:
 	get: return attack_component and attack_component.enabled
@@ -41,6 +41,10 @@ var can_attack: bool:
 ## Call [code]super._ready()[/code] if you sublass.
 func _ready():
 	super._ready()	# Item
+	
+	# default
+	if not attack_component:
+		attack_component = get_node_or_null("AttackComponent") as AttackComponent
 		
 	if attack_effect:
 		attack_effect.stop()
@@ -62,14 +66,17 @@ func fire():
 			if launch_point:
 				projectile.global_transform = launch_point.global_transform
 				launch_basis = launch_point.global_basis
+			else:
+				projectile.global_transform = global_transform
+				launch_basis = projectile.global_basis
 			
 			# a little bit of jitter
-			projectile.rotate_y(deg_to_rad(randf_range(-projectile_jitter,projectile_jitter)))
-			projectile.rotate_x(deg_to_rad(randf_range(-projectile_jitter,projectile_jitter)))
+			launch_basis = launch_basis.rotated(Vector3.UP, randfn(0,1) * spread_jitter)
+			launch_basis = launch_basis.rotated(Vector3.RIGHT, randfn(0,1) * height_jitter)
+			projectile.global_basis = launch_basis
 			
 			# initial velocity
 			var direction := launch_basis * Vector3.MODEL_FRONT * projectile.speed
-			projectile.force_update_transform()
 			projectile.apply_impulse(direction)
 			
 			# optional effect
