@@ -11,32 +11,33 @@ class_name Projectile
 ##
 ## [img]res://addons/estee_kit/docs/example_projectile.png[/img]
 
-enum Hit {
-	Stick,		## This projectile should stick into objects
-	Bounce,		## This projectile should not stick into objects.
-}
-
 @export var speed: float = 50.0		## Projectile speed when fired.
-@export var expiration_time: float = 10.0	## Max time, min time is half this. Zero is "never expires"
-@export var hit_cooldown: float = 1.0	## Delay befor projectile attack disables after hitting
-@export var hit_type: Hit = Hit.Stick	## Behavior on hit.
 
+@export_subgroup("Hit Behavior")
+@export var embed_on_hit: bool = true	## Should the projectile embed itself into the thing it hit or bounce off of it?
+@export var hit_cooldown: float = 1.0	## Delay befor projectile attack disables after hitting
 @export var hit_effect: Effect	## Effect starts on impact.
+
+@export_subgroup("Expiration")
+@export var expiration_time: float = 10.0	## Max time, min time is half this. Zero is "never expires"
 @export var expire_effect: Effect	## Effect starts on expiration. Delays expiration until it completes.
 
+
 var _fired:bool = false
+var _hit: bool = false
 var _expired:bool = false
 var _expired_timer: Timer = null
 var _remote_transform: = RemoteTransform3D.new()	# not attached until we hit something.
 
 
+#region Runtime
 ## Call [code]super._ready()[/code] if you sublass.
 func _ready() -> void:
 	super._ready()
 	_expired_timer = Timer.new()
 	add_child(_expired_timer)
 	_expired_timer.one_shot = true
-	_expired_timer.connect("timeout", _on_expired)
+	_expired_timer.connect("timeout", _on_expire_timer)
 	
 	# for collisions
 	contact_monitor = true
@@ -49,12 +50,14 @@ func _ready() -> void:
 		push_warning("Item ", name, " type is not PROJECTILE!")
 
 
+## Call [code]super._ready()[/code] if you sublass.
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	
 	# orient towards the direction of flight between fire and hit
-	if not freeze and _fired and not _expired and not linear_velocity.is_zero_approx():
+	if not freeze and _fired and not _hit and not linear_velocity.is_zero_approx():
 		look_at(position + (linear_velocity * -1))
+#endregion
 
 
 ## Set the fired flag when attack starts for a projectile.
@@ -66,13 +69,14 @@ func attack_start():
 ## NOTE: Signal registered by [Item] in [method _ready].
 func _on_body_entered(body: Node):
 	super._on_body_entered(body)
+	_hit = true
 	
 	# random expiration time
 	if expiration_time > 0:
 		_expired_timer.start(randf_range(expiration_time/2,expiration_time))
 
 	# stop physics, stop monitoring
-	if hit_type == Hit.Stick:
+	if embed_on_hit:
 		freeze = true
 	
 		# attach to collider, delete projectile if collider exits
@@ -98,15 +102,9 @@ func _on_body_entered(body: Node):
 
 
 ## Called on expiration.
-func _on_expired():
-	# expire end
-	if _expired:
-		if expire_effect:
-			await expire_effect.await_stop()
-		queue_free()
-	
-	# expire start
-	else:
+func _on_expire_timer():
+	# not yet expired...
+	if not _expired:
 		# NOTE: clear the remote_transform so it doesn't
 		# override our _handle_expiring animation!
 		_remote_transform.remote_path = ""
@@ -126,3 +124,9 @@ func _on_expired():
 		# start the timer again. next time we free when we expire
 		if expiration_time > 0:
 			_expired_timer.start(randf_range(expiration_time/2,expiration_time))
+	
+	# expired...
+	else:
+		if expire_effect:
+			await expire_effect.await_stop()
+		queue_free()
