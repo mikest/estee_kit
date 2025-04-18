@@ -1,15 +1,20 @@
 # Copyright (c) 2024-2025 M. Estee
 # MIT License
 
+##
+## Item is a class for creating RigidBody3D objects that characters can interact with.
+##
+## Item has physics, can be picked-up, thrown, dropped, put in inventory, worn, or used.
+## It works with the [InventoryComponent].
+##
+## Items have a type field which can be used to change their behavior, or control what
+## [ItemSlot] they attach to.
+## [br][br]
+## [img]res://addons/estee_kit/docs/example_item.png[/img]
+
 @icon("../icons/bag-icon.png")
 class_name Item
 extends RigidBody3D
-
-##
-## A mixin class for things that the user can pick up, equip and throw
-##
-## Works with InventoryComponent to create items like weapons and other objects.
-##
 
 # Item times. UNARMED is no-item and should only be used for fists, etc.
 enum Type {
@@ -24,25 +29,26 @@ enum Type {
 }
 
 # Physics enabled, detached from user
-signal on_will_drop(item: Item)	## Dropped, and implicitly unequipped
-signal on_dropped(item: Item)	## Dropped, and implicitly unequipped
-#signal on_throw(item: Item)	## Launched, implicit unequipped
+signal on_will_drop(item: Item)	## About to be dropped. Still in inventory.
+signal on_dropped(item: Item)	## Has been dropped. Back in world.
 
+## The item's display name. Can be used in Inventory.
 @export var item_name: String = "Item"
 
 ## The items type. Determines various behaviors
 @export var type: Type = Type.ITEM
 
 ## The rate at which we can interact with the object
-@export var cooldown: float = .25  # delay between allowable interactions
+@export var cooldown: float = .25
 
-## Orientation of the item when in inventory
+## Orientation of the item when in displayed in a UI inventory.
 @export var inventory_front: Vector3 = Vector3.MODEL_FRONT
 
 ## Can this item be thrown?
 @export var throwable := true
 
-## When an item is carried, physics are disabled.
+## When an item is carried, physics are disabled. The attached collision shapes
+## are also disabled.
 @export var carried: bool = false:
 	get: return freeze
 	set(val):
@@ -52,32 +58,44 @@ signal on_dropped(item: Item)	## Dropped, and implicitly unequipped
 			collision.disabled = val
 
 
+## An optional glint overlay that is applied to the Geometry Overlay Material for all [MeshInstance3D]
 @export var optional_glint_overlay: ShaderMaterial = preload("../materials/glint.tres")
 
+## When an item is on cooldown it can't be used.
 var can_use: bool:
 	get: return _cooldown.is_stopped()
 
-# shortcuts
+## Utility getter for unarmed type items.
 var is_unarmed: bool:
 	get: return type == Item.Type.UNARMED
-	
+
+## Utility getter for melee type items.
 var is_melee: bool:
 	get: return type == Item.Type.RANGED_2H or type == Item.Type.MELEE_2H
-	
+
+## Utility getter for ranged type items.	
 var is_ranged: bool:
 	get: return type == Item.Type.RANGED_1H or type == Item.Type.RANGED_2H
 
+## Utility getter for projectile type items.
 var is_projectile: bool:
 	get: return type == Item.Type.PROJECTILE
 
+## Utility getter for generic items.
 var is_item: bool:
 	get: return type == Item.Type.ITEM
 
+## Utility getter for accessory items.
+var is_accessory: bool:
+	get: return type == Item.Type.ACCESSORY
+
 
 #region Runtime
+## Internal timer for cooldown. Reset when used or dropped.
 var _cooldown: Timer = null
 
-# the object that should manage callbacks
+
+## Call [code]super._ready()[/code] if you sublass.
 func _ready() -> void:
 	# cooldown timer
 	_cooldown = Timer.new()
@@ -91,6 +109,7 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
 
+## Call [code]super._ready()[/code] if you sublass.
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_PARENTED:
@@ -103,7 +122,8 @@ func _notification(what: int) -> void:
 			_unparented()
 	
 
-func _parented(_deferred:bool =false) -> void:
+## Enables and disables physics when moving from inventory to level.
+func _parented(_deferred:bool = false) -> void:
 	# Enable physics when we're in the top level
 	var parent := get_parent()
 	if parent == _get_level():
@@ -113,11 +133,12 @@ func _parented(_deferred:bool =false) -> void:
 		carried = true
 
 
-# Remove ourselves from inventory if we move to a new parent
+## Currently a no-op
 func _unparented():
 	pass
 
 
+## Despawns the item if it falls off the map.
 func _physics_process(_delta: float) -> void:
 	if not Engine.is_editor_hint():
 		# despawn if we fall off the map
@@ -159,12 +180,15 @@ func get_aabb() -> AABB:
 	#else:
 		#return null
 
+## Returns the "world" object. Customize for your purposes.
 func _get_level() -> Node3D:
 	if is_inside_tree():
 		return get_tree().current_scene
 	else:
 		return null
 
+## Returns the transform for this object when held. Add a [Marker3D] named "Handle" to the scene
+## for custom handle locations and orientations. Otherwise origin will be used.
 func get_handle_transform() -> Transform3D:
 	var node: Node3D = get_node_or_null("Handle") as Node3D
 	if node:

@@ -1,3 +1,7 @@
+
+##
+## A specialization of Weapon
+##
 class_name Bomb
 extends Weapon
 

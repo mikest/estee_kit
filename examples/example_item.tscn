@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://g8e43ahwbjm4"]
+
+[ext_resource type="Script" uid="uid://c1r2vjtkuf8bl" path="res://addons/estee_kit/src/item.gd" id="1_jhxrs"]
+[ext_resource type="PackedScene" uid="uid://wjv5wxh02nrd" path="res://addons/estee_kit/examples/assets/ExampleBucket.blend" id="2_s5jfi"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1mlqw"]
+height = 0.579102
+radius = 0.25
+
+[node name="ExampleItem" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 15
+script = ExtResource("1_jhxrs")
+metadata/_custom_type_script = "uid://c1r2vjtkuf8bl"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.602051, 0)
+shape = SubResource("CylinderShape3D_1mlqw")
+
+[node name="ExampleBucket" parent="." instance=ExtResource("2_s5jfi")]

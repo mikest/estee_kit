@@ -1,0 +1,64 @@
+[gd_scene load_steps=10 format=3 uid="uid://vidkhkpvpb1e"]
+
+[ext_resource type="Script" uid="uid://bn6o7ll6vv6iq" path="res://addons/estee_kit/src/weapon.gd" id="1_7bcvk"]
+[ext_resource type="PackedScene" uid="uid://bniduygnwp5vw" path="res://addons/estee_kit/examples/example_projectile.tscn" id="2_66x1y"]
+[ext_resource type="Script" uid="uid://bftjv4xa3cv2a" path="res://addons/estee_kit/src/attack_component.gd" id="2_eknq1"]
+[ext_resource type="Script" uid="uid://dn0kx2s2rht1" path="res://addons/estee_kit/src/attack.gd" id="3_r4b54"]
+[ext_resource type="PackedScene" uid="uid://c7v6mgp4ae002" path="res://addons/estee_kit/examples/assets/crossbow_1handed.fbx" id="4_66x1y"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_r4b54"]
+height = 1.1875
+radius = 0.125
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_66x1y"]
+size = Vector3(1, 0.25, 0.25)
+
+[sub_resource type="Resource" id="Resource_cqb50"]
+script = ExtResource("3_r4b54")
+cooldown = 0.2
+attack_damage = 25.0
+knockback_force = 100.0
+attack_position = Vector3(0, 0, 0)
+attack_direction = Vector3(0, 0, 0)
+metadata/_custom_type_script = "uid://dn0kx2s2rht1"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cqb50"]
+size = Vector3(1, 0.25, 0.25)
+
+[node name="ExampleWeapon" type="RigidBody3D" node_paths=PackedStringArray("launch_point")]
+mass = 3.0
+script = ExtResource("1_7bcvk")
+launch_point = NodePath("Marker3D")
+projectile_scene = ExtResource("2_66x1y")
+projectile_jitter = 0.0349066
+item_name = "Crossbow1H"
+type = 4
+inventory_front = Vector3(0, 1, 1)
+metadata/_custom_type_script = "uid://bn6o7ll6vv6iq"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.173648, -0.984808, 0, 0.984808, 0.173648, 0, -0.0360309, 0.332037)
+shape = SubResource("CylinderShape3D_r4b54")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0.75)
+shape = SubResource("BoxShape3D_66x1y")
+
+[node name="AttackComponent" type="Area3D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_eknq1")
+damage = SubResource("Resource_cqb50")
+metadata/_custom_type_script = "uid://bftjv4xa3cv2a"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0.75)
+shape = SubResource("BoxShape3D_cqb50")
+debug_color = Color(1, 0, 0.0906356, 0.42)
+
+[node name="crossbow_1handed" parent="." instance=ExtResource("4_66x1y")]
+
+[node name="Handle" type="Marker3D" parent="."]
+transform = Transform3D(0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.75)

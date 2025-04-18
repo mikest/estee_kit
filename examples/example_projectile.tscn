@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://bniduygnwp5vw"]
+
+[ext_resource type="Script" uid="uid://dxfx8otws4plh" path="res://addons/estee_kit/src/projectile.gd" id="1_x06en"]
+[ext_resource type="PackedScene" uid="uid://q8bbr1nnlusg" path="res://addons/estee_kit/examples/assets/arrow.fbx" id="2_k7mdl"]
+[ext_resource type="Script" uid="uid://bftjv4xa3cv2a" path="res://addons/estee_kit/src/attack_component.gd" id="3_k7mdl"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_x06en"]
+height = 0.6875
+radius = 0.0351562
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_280yw"]
+radius = 0.119716
+
+[node name="ExampleProjectile" type="RigidBody3D"]
+script = ExtResource("1_x06en")
+metadata/_custom_type_script = "uid://dxfx8otws4plh"
+
+[node name="arrow" parent="." instance=ExtResource("2_k7mdl")]
+transform = Transform3D(1, 0, 0, 0, 1.31134e-07, 1, 0, -1, 1.31134e-07, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1.36598e-09, -0.03125)
+shape = SubResource("CylinderShape3D_x06en")
+
+[node name="AttackComponent" type="Area3D" parent="."]
+script = ExtResource("3_k7mdl")
+metadata/_custom_type_script = "uid://bftjv4xa3cv2a"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.364895)
+shape = SubResource("SphereShape3D_280yw")
+debug_color = Color(0.992214, 0, 0.255126, 0.42)
