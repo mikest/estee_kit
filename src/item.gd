@@ -6,6 +6,12 @@
 ##
 ## Item has physics, can be picked-up, thrown, dropped, put in inventory, worn, or used.
 ## It works with the [InventoryComponent].
+## [br][br]
+##
+## Items will be parented to [codeblock]get_tree().get_first_node_in_group("world")[/codeblock]
+## when it is dropped, so you will need to put your levels in group "world". If no "world"
+## is found, nodes will be parented to [codeblock]get_tree().current_scene[/codeblock].
+## [br][br]
 ##
 ## Items have a type field which can be used to change their behavior, or control what
 ## [ItemSlot] they attach to.
@@ -173,17 +179,14 @@ func get_aabb() -> AABB:
 	return bounds
 
 #region Equip/Unequip mechanics
-#func _get_level() -> Level:
-	#if is_inside_tree():
-		#var main: Main = get_tree().current_scene
-		#return main.level as Level
-	#else:
-		#return null
-
-## Returns the "world" object. Customize for your purposes.
+## Returns the "world" node to attach items to or the current_scene if "world" group is empty.
 func _get_level() -> Node3D:
 	if is_inside_tree():
-		return get_tree().current_scene
+		var root: Node3D = get_tree().get_first_node_in_group("world") as Node3D
+		if root:
+			return root
+		else:
+			return get_tree().current_scene
 	else:
 		return null
 
