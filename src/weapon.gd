@@ -10,7 +10,7 @@ extends Item
 ## Seconds between use
 @export var attack_effect: Effect
 
-@export_category("Projectile Weapons")
+@export_subgroup("Projectile Weapons")
 @export var launch_point: Marker3D = null
 @export var projectile_scene: PackedScene = null
 @export_range(0,5,0.01,"radians_as_degrees") var projectile_jitter: float = 0.0

@@ -10,6 +10,7 @@ const Item = preload("src/item.gd")
 const ItemSlot = preload("src/item_slot.gd")
 
 const Weapon = preload("src/weapon.gd")
+const Bomb = preload("src/bomb.gd")
 const Projectile = preload("src/projectile.gd")
 const ProjectileLauncher = preload("src/projectile_launcher.gd")
 
@@ -43,6 +44,7 @@ func _enable_plugin() -> void:
 	add_custom_type("ItemSlot", "RemoteTransform3D", ItemSlot, HandIcon)
 	
 	add_custom_type("Weapon", "Item", Weapon, SwordIcon)
+	add_custom_type("Bomb", "Weapon", Bomb, SwordIcon)
 	add_custom_type("Projectile", "Weapon", Projectile, ProjectileIcon)
 	add_custom_type("ProjectileLauncher", "Node3D", ProjectileLauncher, ProjectileIcon)
 	
@@ -66,6 +68,7 @@ func _disable_plugin() -> void:
 	remove_custom_type("ItemSlot")
 	
 	remove_custom_type("Weapon")
+	remove_custom_type("Bomb")
 	remove_custom_type("Projectile")
 	remove_custom_type("ProjectileLauncher")
 	

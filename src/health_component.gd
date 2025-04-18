@@ -51,7 +51,7 @@ signal on_attack_finished()
 ## Maximum scale of knockback, regardless of how hard we where hit.
 @export var max_knockback: float = 250
 
-@export_category("Debug")
+@export_subgroup("Debug")
 
 #@export_custom(PROPERTY_HINT_NONE, "hint", PROPERTY_USAGE_DEFAULT) var debug_color
 

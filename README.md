@@ -53,6 +53,11 @@ A specialization of `Item` that has an `AttackComponent` and an optional `Projec
 
 Projectiles are `fire()`ed from an optional `launch_point` Marker, or from the weapon origin.
 
+## Bomb
+![](./icons/sword-icon.png)
+
+A specialization of `Weapon` that has a "fuse" phase and a `HealthComponent`. When attacked a bomb will "light the fuse" and then explode after a delay. Adds additional `Effect` slots for the fuse phase. Removes itself from scene tree when finished.
+
 ## Projectile
 ![](./icons/projectile-icon.png)
 
