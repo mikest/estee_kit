@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cfcpr02wnoxyp"
-path="res://.godot/imported/flag_B_blue.fbx-1afedccd4a536aaaa4304b164d562905.scn"
+path="res://.godot/imported/flag_B_blue.fbx-e847d03a1fa40520437855266557f6fe.scn"
 
 [deps]
 
-source_file="res://assets/flag_B_blue.fbx"
-dest_files=["res://.godot/imported/flag_B_blue.fbx-1afedccd4a536aaaa4304b164d562905.scn"]
+source_file="res://addons/estee_kit/examples/assets/flag_B_blue.fbx"
+dest_files=["res://.godot/imported/flag_B_blue.fbx-e847d03a1fa40520437855266557f6fe.scn"]
 
 [params]
 

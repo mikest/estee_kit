@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dh334155mr372"
-path="res://.godot/imported/button_base_blue.fbx-cad1b24239af46073a98e49b6ff617f5.scn"
+path="res://.godot/imported/button_base_blue.fbx-716bcf3935477b4396904965511b34aa.scn"
 
 [deps]
 
-source_file="res://assets/button_base_blue.fbx"
-dest_files=["res://.godot/imported/button_base_blue.fbx-cad1b24239af46073a98e49b6ff617f5.scn"]
+source_file="res://addons/estee_kit/examples/assets/button_base_blue.fbx"
+dest_files=["res://.godot/imported/button_base_blue.fbx-716bcf3935477b4396904965511b34aa.scn"]
 
 [params]
 

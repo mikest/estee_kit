@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqa01dec7iy6g"
-path.s3tc="res://.godot/imported/platformer_texture.png-a9f60396c46d078bcb23964c269cfc91.s3tc.ctex"
+path.s3tc="res://.godot/imported/platformer_texture.png-235365ffbec242c4f9881970ecdb0eb7.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/platformer_texture.png"
-dest_files=["res://.godot/imported/platformer_texture.png-a9f60396c46d078bcb23964c269cfc91.s3tc.ctex"]
+source_file="res://addons/estee_kit/examples/assets/platformer_texture.png"
+dest_files=["res://.godot/imported/platformer_texture.png-235365ffbec242c4f9881970ecdb0eb7.s3tc.ctex"]
 
 [params]
 

@@ -1,11 +1,11 @@
 [gd_scene load_steps=43 format=3 uid="uid://c4dipunf5h2je"]
 
-[ext_resource type="PackedScene" uid="uid://cfcpr02wnoxyp" path="res://assets/flag_B_blue.fbx" id="1_2jas5"]
-[ext_resource type="Script" uid="uid://bdjxr47pmhu02" path="res://ball_character.gd" id="2_kkclv"]
+[ext_resource type="PackedScene" uid="uid://cfcpr02wnoxyp" path="res://addons/estee_kit/examples/assets/flag_B_blue.fbx" id="1_2jas5"]
+[ext_resource type="Script" uid="uid://bh6bsx252sqki" path="res://addons/estee_kit/examples/ball_character.gd" id="2_kkclv"]
 [ext_resource type="Script" uid="uid://dnd7jxg4dw0af" path="res://addons/estee_kit/src/item_slot.gd" id="4_kkclv"]
 [ext_resource type="Script" uid="uid://ce7ykjlwy53tn" path="res://addons/estee_kit/src/health_component.gd" id="4_mt10o"]
-[ext_resource type="PackedScene" uid="uid://dj2ecyxadn4af" path="res://assets/bomb_B_blue.fbx" id="4_ugfer"]
-[ext_resource type="PackedScene" uid="uid://dh334155mr372" path="res://assets/button_base_blue.fbx" id="5_rujmf"]
+[ext_resource type="PackedScene" uid="uid://dj2ecyxadn4af" path="res://addons/estee_kit/examples/assets/bomb_B_blue.fbx" id="4_ugfer"]
+[ext_resource type="PackedScene" uid="uid://dh334155mr372" path="res://addons/estee_kit/examples/assets/button_base_blue.fbx" id="5_rujmf"]
 [ext_resource type="Script" uid="uid://dy50svu3lgy84" path="res://addons/estee_kit/src/inventory_component.gd" id="5_v40a1"]
 [ext_resource type="Script" uid="uid://bn6o7ll6vv6iq" path="res://addons/estee_kit/src/weapon.gd" id="6_3dlnp"]
 [ext_resource type="Script" uid="uid://c35osqwwmoto6" path="res://addons/estee_kit/src/effect.gd" id="7_3dlnp"]
@@ -54,47 +54,6 @@ albedo_color = Color(0.502719, 0.502719, 0.502719, 1)
 height = 0.4375
 radius = 1.0
 
-[sub_resource type="Animation" id="Animation_p21br"]
-resource_name = "start"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("%AttackComponent/CollisionShape3D:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.0333333, 0.366667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0.1, 0.1, 0.1), Vector3(1, 1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Boom:emitting")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.0666667),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("%AttackComponent")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.966667),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"attack_stop"
-}]
-}
-
 [sub_resource type="Animation" id="Animation_7jkea"]
 resource_name = "RESET"
 tracks/0/type = "value"
@@ -129,6 +88,47 @@ tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"attack_stop"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_p21br"]
+resource_name = "start"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("%AttackComponent/CollisionShape3D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.0333333, 0.366667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.1, 0.1, 0.1), Vector3(1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Boom:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.0666667),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("%AttackComponent")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.966667),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -254,12 +254,12 @@ script = ExtResource("2_kkclv")
 [node name="HealthComponent" type="CollisionShape3D" parent="Character"]
 shape = SubResource("CapsuleShape3D_mt10o")
 script = ExtResource("4_mt10o")
-metadata/_custom_type_script = ExtResource("4_mt10o")
+metadata/_custom_type_script = "uid://ce7ykjlwy53tn"
 
 [node name="ItemSlot" type="RemoteTransform3D" parent="Character"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("4_kkclv")
-metadata/_custom_type_script = ExtResource("4_kkclv")
+metadata/_custom_type_script = "uid://dnd7jxg4dw0af"
 
 [node name="BodyMesh" type="MeshInstance3D" parent="Character"]
 material_override = SubResource("StandardMaterial3D_3dlnp")
@@ -268,7 +268,7 @@ mesh = SubResource("CapsuleMesh_hl4on")
 [node name="InventoryComponent" type="Node3D" parent="Character"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, -2)
 script = ExtResource("5_v40a1")
-metadata/_custom_type_script = ExtResource("5_v40a1")
+metadata/_custom_type_script = "uid://dy50svu3lgy84"
 
 [node name="InteractionArea" type="Area3D" parent="Character"]
 collision_layer = 0
@@ -291,12 +291,12 @@ collision_layer = 4
 collision_mask = 7
 script = ExtResource("6_3dlnp")
 attack_effect = NodePath("Effect")
-metadata/_custom_type_script = ExtResource("6_3dlnp")
+metadata/_custom_type_script = "uid://bn6o7ll6vv6iq"
 
 [node name="Effect" type="Node3D" parent="Weapon"]
 editor_description = "Animates the attack area and creates an explosion effect."
 script = ExtResource("7_3dlnp")
-metadata/_custom_type_script = ExtResource("7_3dlnp")
+metadata/_custom_type_script = "uid://c35osqwwmoto6"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon/Effect"]
 unique_name_in_owner = true
@@ -328,7 +328,7 @@ collision_layer = 4
 collision_mask = 2
 script = ExtResource("8_p21br")
 damage = SubResource("Resource_til5q")
-metadata/_custom_type_script = ExtResource("8_p21br")
+metadata/_custom_type_script = "uid://bftjv4xa3cv2a"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Weapon/AttackComponent"]
 shape = SubResource("SphereShape3D_5xqlg")
@@ -343,11 +343,13 @@ collision_mask = 2
 monitorable = false
 script = ExtResource("8_hl4on")
 trigger_delay = 1.0
-metadata/_custom_type_script = ExtResource("8_hl4on")
+metadata/_custom_type_script = "uid://bfaxe678u3tin"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Button/TriggerComponent"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1875, 0)
 shape = SubResource("BoxShape3D_3dlnp")
+debug_color = Color(0.854902, 0.647059, 0.12549, 1)
+debug_fill = false
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_hl4on")

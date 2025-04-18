@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bsfqwm7y8jgq1"
-path="res://.godot/imported/ball.fbx-cc7a1951e288738feec318f58fba3af6.scn"
+path="res://.godot/imported/ball.fbx-e369b6481f0fd453be5c5bdc0d02f842.scn"
 
 [deps]
 
-source_file="res://assets/ball.fbx"
-dest_files=["res://.godot/imported/ball.fbx-cc7a1951e288738feec318f58fba3af6.scn"]
+source_file="res://addons/estee_kit/examples/assets/ball.fbx"
+dest_files=["res://.godot/imported/ball.fbx-e369b6481f0fd453be5c5bdc0d02f842.scn"]
 
 [params]
 
