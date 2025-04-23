@@ -30,5 +30,5 @@ func _notification(what: int) -> void:
 		if remote_path:
 			var item := get_node(remote_path) as Item
 			if item:
-				item.transform = item.transform * item.get_handle_transform()
+				item.transform = item.transform * item.get_handle_transform().inverse()
 	pass
