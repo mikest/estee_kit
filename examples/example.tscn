@@ -296,6 +296,7 @@ metadata/_custom_type_script = "uid://bn6o7ll6vv6iq"
 [node name="Effect" type="Node3D" parent="Weapon"]
 editor_description = "Animates the attack area and creates an explosion effect."
 script = ExtResource("7_3dlnp")
+effect_root = NodePath("AnimationPlayer")
 metadata/_custom_type_script = "uid://c35osqwwmoto6"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon/Effect"]
