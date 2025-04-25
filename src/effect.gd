@@ -2,13 +2,16 @@
 class_name Effect
 extends Node3D
 
+## Path to the driving effect node. Can either be an animation player or a GPUParticles3D
+## object. The calling behavior of the Effect class will be the same regardless.
 @export_node_path("AnimationPlayer", "GPUParticles3D") var effect_root: NodePath
 @export var debug: bool
 
-signal started()
-signal finished()
-signal stopped()
+signal started()  ## Emitted when the driving effect has started.
+signal finished() ## Emitted when the driving effect has finished on its own.
+signal stopped()  ## Emitted when the driving effect has been manually stopped.
 
+## Read-only accessor to test if the effect is looping or one-shot.
 @onready var one_shot: bool:
 	get:
 		var _one_shot = false
@@ -24,6 +27,7 @@ signal stopped()
 		return _one_shot
 			
 
+## Read-only accessor to test if the effect is running or not.
 @onready var is_playing: bool:
 	get:
 		return (_particles and _particles.emitting) \
@@ -33,6 +37,8 @@ signal stopped()
 var _animation: AnimationPlayer
 var _particles: GPUParticles3D
 
+
+## Call [code]super._ready()[/code] if you sublass.
 func _ready() -> void:
 	var animation_node: AnimationPlayer = get_node_or_null(effect_root) as AnimationPlayer
 	
@@ -51,17 +57,18 @@ func _ready() -> void:
 	assert(_particles or _animation, "Missing particles or animation root node")
 
 
-# signal forwarding
+## Signal forwarding for animation.
 func _animation_finished(_name: StringName):
 	if _name == "start":
 		finished.emit()
 
 
+## Signal forwarding for GPU particles.
 func _particles_finished():
 	finished.emit()
 
 
-## Start effect
+## Start the effect.
 func start():
 	if _animation:
 		_animation.play("start")
@@ -70,7 +77,7 @@ func start():
 	started.emit()
 
 
-## Stop effect immediately
+## Stop effect immediately.
 func stop():
 	if _animation:
 		_animation.play("RESET")
