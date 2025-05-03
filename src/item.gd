@@ -132,7 +132,8 @@ func _notification(what: int) -> void:
 func _parented(_deferred:bool = false) -> void:
 	# Enable physics when we're in the top level
 	var parent := get_parent()
-	if parent == _get_level():
+	#if parent == _get_level():
+	if parent.is_in_group("world") or parent.is_in_group("building"):
 		carried = false
 	else:
 		# Disable physics if we're added to an inventory
