@@ -18,6 +18,9 @@ class_name Projectile
 @export var hit_cooldown: float = 1.0	## Delay befor projectile attack disables after hitting
 @export var hit_effect: Effect	## Effect starts on impact.
 
+@export var hide_body_on_hit: bool = false	## Should the [member projectile_body] MeshInstance3Ds be hidden on hit?
+@export var projectile_body: Node3D 			## Body of the projectile
+
 @export_subgroup("Expiration")
 @export var expiration_time: float = 10.0	## Max time, min time is half this. Zero is "never expires"
 @export var expire_effect: Effect	## Effect starts on expiration. Delays expiration until it completes.
@@ -94,6 +97,10 @@ func _on_body_entered(body: Node):
 	# hit effects and sounds
 	if hit_effect:
 		hit_effect.start()
+	
+	# hide the body mesh
+	if hide_body_on_hit and projectile_body:
+		projectile_body.hide()
 	
 	# stop after a cooldown delay
 	if hit_cooldown > 0:
