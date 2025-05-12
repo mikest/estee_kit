@@ -18,6 +18,7 @@
 ## [br][br]
 ## [img]res://addons/estee_kit/docs/example_item.png[/img]
 
+@tool
 @icon("../icons/bag-icon.png")
 class_name Item
 extends RigidBody3D
@@ -63,6 +64,9 @@ signal on_dropped(item: Item)	## Has been dropped. Back in world.
 		for collision: CollisionShape3D in collisions:
 			collision.disabled = val
 
+## The items visual representation. Other classes use this for various pruposes,
+## such as hiding projectiles and bombs when they explode.
+@export var visual_body: Node3D
 
 ## An optional glint overlay that is applied to the Geometry Overlay Material for all [MeshInstance3D]
 @export var optional_glint_overlay: ShaderMaterial = preload("../materials/glint.tres")
@@ -103,6 +107,11 @@ var _cooldown: Timer = null
 
 ## Call [code]super._ready()[/code] if you sublass.
 func _ready() -> void:
+	# tooling
+	if Engine.is_editor_hint():
+		EditorInterface.get_inspector().property_edited.connect(_on_inspector_edited_object_changed)
+		return
+		
 	# cooldown timer
 	_cooldown = Timer.new()
 	_cooldown.one_shot = true
@@ -115,8 +124,38 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
 
+func _on_inspector_edited_object_changed(property: StringName):
+	if property == &"collision_mask" or \
+		property == &"collision_layer":
+		update_configuration_warnings()
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings: PackedStringArray
+	
+	if not get_collision_layer_value(Utils.ItemLayer):
+		warnings.append("Should be an item in the Item layer")
+		
+	if not get_collision_mask_value(Utils.PlayerLayer):
+		warnings.append("Should mask detect Player")
+		
+	if not get_collision_mask_value(Utils.EnemyLayer):
+		warnings.append("Should mask detect Enemies")
+		
+	if not get_collision_mask_value(Utils.WorldLayer):
+		warnings.append("Should mask detect World")
+	
+	if get_collision_mask_value(Utils.ItemLayer):
+		if type==Item.Type.PROJECTILE:
+			warnings.append("Projectiles should NOT mask detect Items")
+	
+	
+	return warnings
+
 ## Call [code]super._ready()[/code] if you sublass.
 func _notification(what: int) -> void:
+	if Engine.is_editor_hint(): return
+	
 	match what:
 		NOTIFICATION_PARENTED:
 			if is_inside_tree():
@@ -151,7 +190,7 @@ func _physics_process(_delta: float) -> void:
 		# despawn if we fall off the map
 		if global_position.y < -100.0:
 			queue_free()
-			push_warning("Dropped out of world, despawning ", self)
+			push_warning("Dropped out of world, despawning ", get_path())
 #endregion
 
 

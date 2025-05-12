@@ -1,3 +1,4 @@
+@tool
 @icon("../icons/sword-icon.png")
 class_name Weapon
 extends Item
@@ -42,6 +43,11 @@ var can_attack: bool:
 func _ready():
 	super._ready()	# Item
 	
+	# tooliong
+	if Engine.is_editor_hint():
+		_rebuild_dummy_arrow()
+		return
+	
 	# default
 	if not attack_component:
 		attack_component = get_node_or_null("AttackComponent") as AttackComponent
@@ -55,6 +61,8 @@ func _ready():
 
 ## Fires projectile. Starts the attack effect.
 func fire():
+	if Engine.is_editor_hint(): return
+	
 	if projectile_scene and (projectile_count != 0):
 		var projectile: Projectile = projectile_scene.instantiate()
 		if projectile:
@@ -84,7 +92,7 @@ func fire():
 				attack_effect.start()
 			
 			# enabled
-			projectile.attack_start()
+			projectile.fire_start()
 			
 			if projectile_count > 0:
 				projectile_count -= 1
@@ -107,4 +115,27 @@ func attack_stop():
 	if attack_effect:
 		attack_effect.stop()
 
+
+#region Tooling
+
+func _process(_delta: float):
+	if Engine.is_editor_hint():
+		if _dummy_arrow:
+			_dummy_arrow.global_position = launch_point.global_position
+
+func _on_inspector_edited_object_changed(property: StringName):
+	super._on_inspector_edited_object_changed(property)
+	if property == &"projectile_scene":
+		_rebuild_dummy_arrow()
+
+var _dummy_arrow: Projectile = null
+func _rebuild_dummy_arrow():
+	if Engine.is_editor_hint():
+		if _dummy_arrow:
+			_dummy_arrow.queue_free()
+		if projectile_scene:
+			_dummy_arrow = projectile_scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+			add_child(_dummy_arrow)
+			_dummy_arrow.position = launch_point.position
+#endregion
 	

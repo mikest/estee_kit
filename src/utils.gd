@@ -4,12 +4,12 @@
 extends Object
 class_name Utils
 
-# our layer masks
+# our layer indexes
 const WorldLayer := 1
 const PlayerLayer := 2
-const ItemLayer := 4
-const EnemyLayer := 8
-const InteractionLayer := 16
+const ItemLayer := 3
+const EnemyLayer := 4
+const InteractionLayer := 5
 
 
 static func default_gravity() -> Vector3:
@@ -163,8 +163,8 @@ static func set_collision_debug(node: Node3D, color: Color, fill: bool):
 
 
 ## Toggle the enable state on a collection of collisions
-static func enable_collisions(node: Node3D, enabled: bool):
-	var collisions := node.find_children("*", "CollisionShape3D", true)
+static func enable_collisions(node: Node3D, enabled: bool, recursive: bool = true):
+	var collisions := node.find_children("*", "CollisionShape3D", recursive)
 	assert(collisions, "Missing collisions")
 	for collision: CollisionShape3D in collisions:
 		collision.disabled = not enabled

@@ -18,8 +18,7 @@ class_name Projectile
 @export var hit_cooldown: float = 1.0	## Delay befor projectile attack disables after hitting
 @export var hit_effect: Effect	## Effect starts on impact.
 
-@export var hide_body_on_hit: bool = false	## Should the [member projectile_body] MeshInstance3Ds be hidden on hit?
-@export var projectile_body: Node3D 			## Body of the projectile
+@export var hide_body_on_hit: bool = false	## Should the [member visual_body] MeshInstance3Ds be hidden on hit?
 
 @export_subgroup("Expiration")
 @export var expiration_time: float = 10.0	## Max time, min time is half this. Zero is "never expires"
@@ -31,6 +30,10 @@ var _hit: bool = false
 var _expired:bool = false
 var _expired_timer: Timer = null
 var _remote_transform: = RemoteTransform3D.new()	# not attached until we hit something.
+var _start_position: Vector3
+
+## Distance from fire origin we must be to start the attack
+const _attack_start_distance := 1.5
 
 
 #region Runtime
@@ -60,14 +63,26 @@ func _physics_process(delta: float) -> void:
 	# orient towards the direction of flight between fire and hit
 	if not freeze and _fired and not _hit and not linear_velocity.is_zero_approx():
 		look_at(position + (linear_velocity * -1))
+	
+	# if we've moved a distance from our start position, enable the attack
+	if not is_attacking and _fired and _start_position.distance_to(global_position) > _attack_start_distance:
+		attack_start()
+		contact_monitor = true
+		set_collision_mask_value(Utils.ItemLayer, true)
 #endregion
+	
 
-
-## Set the fired flag when attack starts for a projectile.
-func attack_start():
-	super.attack_start()
+## Called when fired, we will start the attack after a fixed distance to avoid hitting ourself
+func fire_start():
+	contact_monitor = false
 	_fired = true
+	_start_position = global_position
 
+
+func _integrate_forces(_state):
+	if freeze:
+		linear_velocity = Vector3.ZERO
+	pass
 
 ## NOTE: Signal registered by [Item] in [method _ready].
 func _on_body_entered(body: Node):
@@ -93,14 +108,15 @@ func _on_body_entered(body: Node):
 	
 		# cancel out any forces we might impart
 		linear_velocity = Vector3.ZERO
+		
 	
 	# hit effects and sounds
 	if hit_effect:
 		hit_effect.start()
 	
 	# hide the body mesh
-	if hide_body_on_hit and projectile_body:
-		projectile_body.hide()
+	if hide_body_on_hit and visual_body:
+		visual_body.hide()
 	
 	# stop after a cooldown delay
 	if hit_cooldown > 0:

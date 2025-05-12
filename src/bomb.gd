@@ -2,13 +2,13 @@
 ##
 ## A specialization of Weapon
 ##
+@tool
 class_name Bomb
 extends Weapon
 
 @export_range(0, 10, 0.01, "hide_slider", "suffix:sec") var fuse_delay: float = 2
 @export var fuse_effect: Effect				## Start when fuse is lit. Optional.
 @export var fuse_health: HealthComponent	## Attack to light fuse. Optional.
-@export var bomb_mesh: Node3D				## Hidden when the explosion starts. Optional
 
 @export_subgroup("Explosion Attack")
 @export_range(0, 10, 0.01, "hide_slider", "suffix:sec") var attack_duration: float = 2
@@ -20,6 +20,8 @@ var delay_fuse: bool = true
 
 func _ready():
 	super._ready()
+	if Engine.is_editor_hint():
+		return
 	
 	# for fuse and explosion
 	bomb_timer = Timer.new()
@@ -34,11 +36,32 @@ func _ready():
 	attack_stop()
 	fuse_stop()
 
+
+#region Tooling
+func _on_inspector_edited_object_changed(property: StringName):
+	super._on_inspector_edited_object_changed(property)
+	
+	if property == &"visual_body":
+		update_configuration_warnings()
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := super._get_configuration_warnings()
+	
+	if not visual_body:
+		warnings.append("Missing visual_body.")
+	
+	return warnings
+#endregion
+
+
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
-	var attack_min_scale := 0.05
+	if Engine.is_editor_hint():
+		return
 	
 	# scale the size of our attack area during an attack
+	var attack_min_scale := 0.05
 	if is_attacking:
 		# clip the phase to a minimum scale so colliders don't get sad
 		var phase: float = 1.0 - maxf(attack_min_scale, bomb_timer.time_left / bomb_timer.wait_time)
@@ -47,10 +70,6 @@ func _physics_process(delta: float) -> void:
 		attack_component.scale = Vector3(phase,phase,phase)
 	else:
 		attack_component.scale = Vector3(attack_min_scale, attack_min_scale, attack_min_scale)
-
-
-func _on_body_entered(_body: Node):
-	super._on_body_entered(_body)
 
 
 func _on_bomb_timer():
@@ -62,8 +81,8 @@ func _on_bomb_timer():
 		super.attack_start()
 		
 		# hide the bomb object because at this point, it has "exploded"
-		if bomb_mesh:
-			bomb_mesh.hide()
+		if visual_body:
+			visual_body.hide()
 		if fuse_health:
 			fuse_health.disabled = true
 	
