@@ -51,11 +51,11 @@ static func rotate_around_target(node: Node3D, target: Node3D, angle: float) -> 
 	return pos
 
 
-static func align_transform_with_yaxis(transform: Transform3D, y_axis: Vector3):
-	transform.basis.y = y_axis
-	transform.basis.x = -transform.basis.z.cross(y_axis)
-	transform.basis = transform.basis.orthonormalized()
-	return transform
+static func align_transform_with_yaxis(xform: Transform3D, y_axis: Vector3):
+	xform.basis.y = y_axis
+	xform.basis.x = -xform.basis.z.cross(y_axis)
+	xform.basis = xform.basis.orthonormalized()
+	return xform
 
 
 # Used to figure out when the IKTarget has strayed too far and we should start a step cycle
