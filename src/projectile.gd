@@ -29,7 +29,7 @@ var _fired:bool = false
 var _hit: bool = false
 var _expired:bool = false
 var _expired_timer: Timer = null
-var _remote_transform: = RemoteTransform3D.new()	# not attached until we hit something.
+var _remote_transform: RemoteTransform3D = null
 var _start_position: Vector3
 
 ## Distance from fire origin we must be to start the attack
@@ -87,6 +87,11 @@ func _integrate_forces(_state):
 ## NOTE: Signal registered by [Item] in [method _ready].
 func _on_body_entered(body: Node):
 	super._on_body_entered(body)
+	
+	# we can get double body entereded events on Terrain3D collision shapes
+	# this prevents attaching twice
+	if _hit:
+		return
 	_hit = true
 	
 	# random expiration time
@@ -98,6 +103,7 @@ func _on_body_entered(body: Node):
 		freeze = true
 	
 		# attach to collider, delete projectile if collider exits
+		_remote_transform = RemoteTransform3D.new()
 		body.add_child(_remote_transform)
 		
 		# why the transform instead of just reparenting?
@@ -130,7 +136,8 @@ func _on_expire_timer():
 	if not _expired:
 		# NOTE: clear the remote_transform so it doesn't
 		# override our _handle_expiring animation!
-		_remote_transform.remote_path = ""
+		if _remote_transform:
+			_remote_transform.remote_path = ""
 		_expired = true
 		contact_monitor = false
 		freeze = false

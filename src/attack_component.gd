@@ -27,12 +27,14 @@ signal on_attack_stop()	## Emitted at the end of an attack.
 
 @export var one_shot: bool ## Hit once per swing, or continuously?
 @export var damage: Attack 	## Damage done when invoked.
+@export var start_enabled: bool
 
 ## Updates monitoring and the disabled flag for all collider children
 ## so they aren't visible in the debugger.
 var enabled: bool:
 	get: return monitoring
 	set(val):
+		process_mode = Node.PROCESS_MODE_INHERIT if val else Node.PROCESS_MODE_DISABLED
 		monitoring = val
 		Utils.enable_collisions(self, val)
 
@@ -59,8 +61,8 @@ func _ready() -> void:
 	body_entered.connect(_on_entered)
 	body_exited.connect(_on_exited)
 
-	enabled = true
 	Utils.set_collision_debug(self, Color.ORANGE_RED, true)
+	enabled = start_enabled
 
 
 func _on_cooldown():
