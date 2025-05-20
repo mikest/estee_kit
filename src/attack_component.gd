@@ -44,7 +44,10 @@ var _attack_bodies: Dictionary[Node3D, HealthComponent] = {}
 
 ## Utility for finding the health component in a standard place
 static func get_health(body:Node3D) -> HealthComponent:
-	return body.find_child("HealthComponent", false) as HealthComponent
+	if body:
+		return body.find_child("HealthComponent", false) as HealthComponent
+	else:
+		return null
 
 
 func _ready() -> void:

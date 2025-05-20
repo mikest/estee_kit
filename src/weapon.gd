@@ -63,6 +63,9 @@ func _ready():
 func fire():
 	if Engine.is_editor_hint(): return
 	
+	# cooldown, etc.
+	reset_cooldown()
+	
 	if projectile_scene and (projectile_count != 0):
 		var projectile: Projectile = projectile_scene.instantiate()
 		if projectile:
@@ -99,7 +102,9 @@ func fire():
 
 
 ## Starts the attack effect and enables the AttackComponent if set.
+## Will reset the cooldown, but doesn't prevent the attack
 func attack_start():
+	reset_cooldown()
 	if attack_component:
 		attack_component.enabled = true
 		

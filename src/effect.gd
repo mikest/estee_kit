@@ -4,8 +4,8 @@ extends Node3D
 
 ## Path to the driving effect node. Can either be an animation player or a GPUParticles3D
 ## object. The calling behavior of the Effect class will be the same regardless.
+@export var autostart: bool = false
 @export_node_path("AnimationPlayer", "GPUParticles3D") var effect_root: NodePath
-@export var debug: bool
 
 signal started()  ## Emitted when the driving effect has started.
 signal finished() ## Emitted when the driving effect has finished on its own.
@@ -55,6 +55,9 @@ func _ready() -> void:
 		_particles.finished.connect(_particles_finished)
 	
 	assert(_particles or _animation, "Missing particles or animation root node")
+	
+	if autostart:
+		start()
 
 
 ## Signal forwarding for animation.

@@ -190,7 +190,7 @@ func _physics_process(_delta: float) -> void:
 		# despawn if we fall off the map
 		if global_position.y < -100.0:
 			queue_free()
-			push_warning("Dropped out of world, despawning ", get_path())
+			#push_warning("Dropped out of world, despawning ", get_path())
 #endregion
 
 
@@ -256,7 +256,10 @@ func drop_item():
 	if carried:
 		on_will_drop.emit(self)
 		reparent(_get_level())
-		_cooldown.start(cooldown)
+		reset_cooldown()
 		on_dropped.emit(self)
+
+func reset_cooldown():
+	_cooldown.start(cooldown)
 
 #endregion

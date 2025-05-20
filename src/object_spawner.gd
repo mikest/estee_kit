@@ -14,6 +14,10 @@ class_name ObjectSpawner
 
 @export var scene: PackedScene = null
 @export var max_spawn: int = 3
+@export_range(1,100) var units_per_spawn: int = 1
+@export var mean := 0
+@export var deviation := .1
+
 @export var height_offset: float = 0 # Height above the floor that scene should spawn
 @export var navigation_region: NavigationRegion3D ## region objects can spawn into
 @export_flags_3d_physics var world_collision_mask: int = 1	## layers that objects can spawn onto
@@ -38,10 +42,6 @@ func _ready():
 	max_spawn = max_spawn + navigation_region.get_child_count()
 	pass
 
-# hot key for spawning scene
-func _input(event: InputEvent):
-	if event.is_action_pressed("spawn"):
-		_spawn_scene()
 
 # only spawn during process
 func _process(_delta: float):
@@ -59,26 +59,29 @@ func _spawn_scene():
 		var idx := randi() % markers.size()
 		spawn_point = (markers[idx] as Marker3D).global_position
 	
-	var count := navigation_region.get_child_count()
-	if count < max_spawn:
-		# find the resting position for the new enemy
-		ray.global_position.x = spawn_point.x
-		ray.global_position.z = spawn_point.z
-		ray.global_position.y = ray_dist/2.0
-		
-		# test ray cast with new position
-		ray.force_update_transform()
-		ray.force_raycast_update()
-		if ray.is_colliding():
-			spawn_point.y = ray.get_collision_point().y + height_offset
+	for n in units_per_spawn:
+		var count := navigation_region.get_child_count()
+		if count < max_spawn:
+			# find the resting position for the new enemy
+			ray.global_position.x = spawn_point.x
+			ray.global_position.z = spawn_point.z
+			ray.global_position.y = ray_dist/2.0
 			
-			var instance := scene.instantiate() as Node3D
-			navigation_region.add_child(instance)
-			
-			instance.global_position = spawn_point
-			instance.rotate_y(randf_range(-TAU, TAU))
-	else:
-		print("Too many nav children, max_spawn exceeded.")
+			# test ray cast with new position
+			ray.force_update_transform()
+			ray.force_raycast_update()
+			if ray.is_colliding():
+				spawn_point.y = ray.get_collision_point().y + height_offset + randfn(mean, deviation)
+				
+				var instance := scene.instantiate() as Node3D
+				navigation_region.add_child(instance)
+				
+				instance.global_position = spawn_point
+				instance.rotate_y(randf_range(-TAU, TAU))
+				instance.position.x += randfn(mean, deviation)
+				instance.position.z += randfn(mean, deviation)
+		else:
+			print("Too many nav children, max_spawn exceeded.")
 	
 	# clear spawn flag
 	_should_spawn = false
