@@ -57,8 +57,8 @@ signal on_attack_finished()
 
 const HP_PER_HEART: float = 100.0
 
-@onready var health: float = max_health 	## Hitpoints. 100 is one heart, by convention.
-@onready var is_dead: bool:	## Are we in the afterlife?
+var health: float 	## Hitpoints. 100 is one heart, by convention.
+var is_dead: bool:	## Are we in the afterlife?
 	get: return health <= 0.0
 
 # for hit flashes
@@ -68,10 +68,12 @@ func _ready():
 	debug_color = Color.WEB_GREEN
 	debug_fill = true
 	
+	# initial health
+	health = max_health
+	
 	# set up the decay timer
 	_hit_timer = Timer.new()
 	_hit_timer.one_shot = true
-	_hit_timer.wait_time = 0.3
 	add_child(_hit_timer)
 	_hit_timer.timeout.connect(_on_hit_timer)
 
@@ -130,7 +132,7 @@ func damage(attack: Attack):
 	if _hit_timer.is_stopped():
 		on_attacked.emit(attack)
 		set_health(health - attack.attack_damage)
-		_hit_timer.start()
+		_hit_timer.start(cooldown)
 
 func _on_hit_timer():
 	on_attack_finished.emit()
