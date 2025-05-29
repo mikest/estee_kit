@@ -5,6 +5,7 @@ extends Object
 class_name Utils
 
 # our layer indexes
+# for use with get_collision_mask_value
 const WorldLayer := 1
 const PlayerLayer := 2
 const ItemLayer := 3
