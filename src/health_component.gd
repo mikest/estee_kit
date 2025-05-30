@@ -106,6 +106,12 @@ func set_health(new_health: float):
 		if health <= 0:
 			on_died.emit()
 
+## Scales the health proportionally
+func set_max_health(new_max: float):
+	var percent: float = new_max/max_health
+	max_health = new_max
+	health *= percent
+
 ## Sum up all the attack directions and apply the kockback force.
 ## Return the resulting movement change
 func knockback_for_attacks(attacks: Array[Attack]) -> Vector3:

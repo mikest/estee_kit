@@ -31,6 +31,7 @@ const ray_dist := 1000.0		# casting distance for finding "ground"
 #region Runtime
 func _ready():
 	assert(scene, "Object Spawner is missing scene")
+	assert(navigation_region, "Object Spawner is nav region")
 	
 	# create a ray caster for finding the ground
 	ray = RayCast3D.new()
@@ -40,7 +41,6 @@ func _ready():
 	
 	# count existing children in nav region and add that to our max
 	max_spawn = max_spawn + navigation_region.get_child_count()
-	pass
 
 
 # only spawn during process
@@ -50,7 +50,8 @@ func _process(_delta: float):
 #endregion
 
 
-func _spawn_scene():
+func _spawn_scene() -> Array[Node3D]:
+	var instances: Array[Node3D] = []
 	var spawn_point: = self.global_position
 	
 	# if we have marker children, use a random one as a spawn point
@@ -80,11 +81,15 @@ func _spawn_scene():
 				instance.rotate_y(randf_range(-TAU, TAU))
 				instance.position.x += randfn(mean, deviation)
 				instance.position.z += randfn(mean, deviation)
+				
+				# add to list
+				instances.push_back(instance)
 		else:
 			print("Too many nav children, max_spawn exceeded.")
 	
 	# clear spawn flag
 	_should_spawn = false
+	return instances
 
 
 func on_spawn(_switch):
