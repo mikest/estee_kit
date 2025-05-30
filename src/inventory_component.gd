@@ -68,13 +68,14 @@ func _on_child_exiting_tree(node: Node):
 
 
 func _deferred_child_exited(item: Item):
-	_on_item_removed(item)
 	if item == selected_item():
 		_selected = -1
 		_selection_change()
 	
-	_update_item_positions()
+	_on_item_removed(item)
 	on_remove_item.emit(item)
+	
+	_update_item_positions()
 	print_rich(self.name, " removed [color=orange]", item,"[/color]")
 #endregion
 
