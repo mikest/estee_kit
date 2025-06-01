@@ -13,13 +13,17 @@ class_name ObjectSpawner
 ##
 
 @export var scene: PackedScene = null
-@export var max_spawn: int = 3
+
+## Maximum number of spawn instances in the navigation_region.
+## If set to -1 spawn count is unlimited.
+@export var max_spawn: int = -1
+@export var navigation_region: NavigationRegion3D ## region objects can spawn into
 @export_range(1,100) var units_per_spawn: int = 1
+
 @export var mean := 0
 @export var deviation := .1
 
 @export var height_offset: float = 0 # Height above the floor that scene should spawn
-@export var navigation_region: NavigationRegion3D ## region objects can spawn into
 @export_flags_3d_physics var world_collision_mask: int = 1	## layers that objects can spawn onto
 
 
@@ -62,7 +66,7 @@ func _spawn_scene() -> Array[Node3D]:
 	
 	for n in units_per_spawn:
 		var count := navigation_region.get_child_count()
-		if count < max_spawn:
+		if (max_spawn < 0) or (count < max_spawn):
 			# find the resting position for the new enemy
 			ray.global_position.x = spawn_point.x
 			ray.global_position.z = spawn_point.z
@@ -72,7 +76,9 @@ func _spawn_scene() -> Array[Node3D]:
 			ray.force_update_transform()
 			ray.force_raycast_update()
 			if ray.is_colliding():
-				spawn_point.y = ray.get_collision_point().y + height_offset + randfn(mean, deviation)
+				# vary the height a little, but don't go below the collision point.
+				var y_pos := ray.get_collision_point().y
+				spawn_point.y = maxf(y_pos, y_pos + height_offset + randfn(height_offset, deviation))
 				
 				var instance := scene.instantiate() as Node3D
 				navigation_region.add_child(instance)

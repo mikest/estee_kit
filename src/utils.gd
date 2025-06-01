@@ -170,12 +170,3 @@ static func enable_collisions(node: Node3D, enabled: bool, recursive: bool = tru
 	for collision: CollisionShape3D in collisions:
 		collision.disabled = not enabled
 		collision.debug_fill = enabled
-
-## Utility function for displaying BBParams in BBTask labels
-static func bbparam_display_name(val:BBParam, unit:String="") -> String:
-	if not val:
-		return "null"
-	if val.value_source == BBParam.ValueSource.BLACKBOARD_VAR:
-		return "($" + val.variable + ")" + unit
-	else:
-		return str(val) + unit

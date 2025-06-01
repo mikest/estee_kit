@@ -61,8 +61,9 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	
 	# orient towards the direction of flight between fire and hit
-	if not freeze and _fired and not _hit and not linear_velocity.is_zero_approx():
-		look_at(position + (linear_velocity * -1))
+	var forward_pos := position + (linear_velocity * -1)
+	if not freeze and _fired and not _hit and not global_position.is_equal_approx(forward_pos):
+		look_at(forward_pos)
 	
 	# if we've moved a distance from our start position, enable the attack
 	if not is_attacking and _fired and _start_position.distance_to(global_position) > _attack_start_distance:

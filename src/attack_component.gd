@@ -35,7 +35,7 @@ var enabled: bool:
 	get: return monitoring
 	set(val):
 		process_mode = Node.PROCESS_MODE_INHERIT if val else Node.PROCESS_MODE_DISABLED
-		monitoring = val
+		set_deferred("monitoring", val) #monitoring = val
 		Utils.enable_collisions(self, val)
 
 var _cooldown_timer: Timer = null
@@ -52,7 +52,7 @@ static func get_health(body:Node3D) -> HealthComponent:
 
 func _ready() -> void:
 	# Not detectable by other areas or bodies
-	monitorable = false
+	set_deferred("monitorable", false) #monitorable = false
 	
 	# Attacks repeat after cooldown if still hitting health area
 	_cooldown_timer = Timer.new()
