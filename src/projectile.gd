@@ -49,6 +49,8 @@ func _ready() -> void:
 	contact_monitor = true
 	continuous_cd = true		# we're a fast moving small object
 	max_contacts_reported = 1
+	freeze_mode = RigidBody3D.FREEZE_MODE_STATIC
+	disable_mode = CollisionObject3D.DISABLE_MODE_REMOVE
 	
 	# Already registered by Weapon...
 	# body_entered.connect(_on_body_entered)
@@ -62,7 +64,11 @@ func _physics_process(delta: float) -> void:
 	
 	# orient towards the direction of flight between fire and hit
 	var forward_pos := position + (linear_velocity * -1)
-	if not freeze and _fired and not _hit and not global_position.is_equal_approx(forward_pos):
+	if _fired \
+		and not _hit \
+		and not freeze \
+		and not global_position.is_equal_approx(forward_pos) \
+		and not Utils.is_colinear(global_position, forward_pos):
 		look_at(forward_pos)
 	
 	# if we've moved a distance from our start position, enable the attack
@@ -70,8 +76,9 @@ func _physics_process(delta: float) -> void:
 		attack_start()
 		contact_monitor = true
 		set_collision_mask_value(Utils.ItemLayer, true)
+
 #endregion
-	
+
 
 ## Called when fired, we will start the attack after a fixed distance to avoid hitting ourself
 func fire_start():
@@ -81,9 +88,12 @@ func fire_start():
 
 
 func _integrate_forces(_state):
-	if freeze:
-		linear_velocity = Vector3.ZERO
 	pass
+	
+
+func _enable_physics(enabled:bool):
+	freeze = not enabled
+		
 
 ## NOTE: Signal registered by [Item] in [method _ready].
 func _on_body_entered(body: Node):
@@ -101,21 +111,23 @@ func _on_body_entered(body: Node):
 
 	# stop physics, stop monitoring
 	if embed_on_hit:
-		freeze = true
+		_enable_physics(false)
+		contact_monitor = false
 	
 		# attach to collider, delete projectile if collider exits
-		_remote_transform = RemoteTransform3D.new()
-		body.add_child(_remote_transform)
+		#_remote_transform = RemoteTransform3D.new()
+		#body.add_child(_remote_transform)
+		#
+		## why the transform instead of just reparenting?
+		## this avoids some scene nonsense that messes with the physics.
+		#_remote_transform.global_transform = global_transform
+		#_remote_transform.remote_path = _remote_transform.get_path_to(self)
+		#_remote_transform.tree_exited.connect(queue_free)
+		reparent(body)
+		top_level = false
 		
-		# why the transform instead of just reparenting?
-		# this avoids some scene nonsense that messes with the physics.
-		_remote_transform.global_transform = global_transform
-		_remote_transform.remote_path = _remote_transform.get_path_to(self)
-		_remote_transform.tree_exited.connect(queue_free)
-	
-		# cancel out any forces we might impart
-		linear_velocity = Vector3.ZERO
-		
+		# disable collisions
+		Utils.enable_collisions.call_deferred(self, false)
 	
 	# hit effects and sounds
 	if hit_effect:
@@ -140,8 +152,16 @@ func _on_expire_timer():
 		if _remote_transform:
 			_remote_transform.remote_path = ""
 		_expired = true
+		
+		_enable_physics(true)
 		contact_monitor = false
-		freeze = false
+		top_level = false
+		var root: Node3D = get_tree().get_first_node_in_group("world") as Node3D
+		attack_stop()
+		reparent(root)
+		
+		Utils.enable_collisions.call_deferred(self, true)
+		#freeze = false
 		
 		# stop the hit effect when starting expire
 		if hit_effect:

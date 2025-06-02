@@ -170,3 +170,13 @@ static func enable_collisions(node: Node3D, enabled: bool, recursive: bool = tru
 	for collision: CollisionShape3D in collisions:
 		collision.disabled = not enabled
 		collision.debug_fill = enabled
+
+static func is_colinear(a: Vector3, b:Vector3) -> bool:
+	# Normalised target.
+	var v_z : Vector3 = (a - b).normalized()
+	# Perpendicular vector using up+front.
+	var v_x : Vector3 = Vector3.UP.cross(-v_z)
+	
+	if v_x.is_zero_approx():
+		return true
+	return false
