@@ -112,7 +112,7 @@ func _on_body_entered(body: Node):
 	# stop physics, stop monitoring
 	if embed_on_hit:
 		_enable_physics(false)
-		contact_monitor = false
+		set_contact_monitor.call_deferred(false) # contact_monitor = false
 	
 		# attach to collider, delete projectile if collider exits
 		#_remote_transform = RemoteTransform3D.new()
@@ -123,8 +123,8 @@ func _on_body_entered(body: Node):
 		#_remote_transform.global_transform = global_transform
 		#_remote_transform.remote_path = _remote_transform.get_path_to(self)
 		#_remote_transform.tree_exited.connect(queue_free)
-		reparent(body)
 		top_level = false
+		reparent.call_deferred(body)
 		
 		# disable collisions
 		Utils.enable_collisions.call_deferred(self, false)

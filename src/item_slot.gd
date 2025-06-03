@@ -28,7 +28,7 @@ class_name ItemSlot
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSFORM_CHANGED:
 		if remote_path:
-			var item := get_node(remote_path) as Item
+			var item := get_node_or_null(remote_path) as Item
 			if item:
 				item.transform = item.transform * item.get_handle_transform().inverse()
 	pass
