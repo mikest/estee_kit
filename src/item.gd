@@ -177,6 +177,9 @@ func _parented(_deferred:bool = false) -> void:
 	else:
 		# Disable physics if we're added to an inventory
 		carried = true
+	
+	# move ownership to the parent so that if the original owner is freed this item still sticks around
+	owner = parent
 
 
 ## Currently a no-op
